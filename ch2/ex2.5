@@ -1,0 +1,55 @@
+#include "highgui.h"
+#include "cv.h"
+
+
+IplImage* doPyrDown(IplImage* in){
+	assert(in->width % 2 == 0 && in->height % 2 == 0);
+	IplImage* out = cvCreateImage(
+		cvSize(in->width / 2, 
+		in->height / 2),
+		in->depth, 
+		in->nChannels);
+	cvPyrDown(in, out);
+	return out;
+}
+
+int main(int argc, char** argv){
+	//载入视频文件，并检查成功载入与否
+	CvCapture* capture = 0;
+	capture = cvCreateFileCapture(argv[1]);
+	if (!capture) return -1;
+	printf("step 1");
+	//获取capture的信息: FPS、width、height
+	IplImage* in = cvQueryFrame(capture);
+	double fps = cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
+	CvSize size = cvSize(
+		(int)cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH)/2,
+		(int)cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT)/2);
+	
+	//准备写入文件
+	CvVideoWriter* writer = cvCreateVideoWriter(
+		argv[2],
+		CV_FOURCC('M', 'J', 'P', 'G'),
+		fps,
+		size);
+	
+	//缩放处理,写入文件
+	IplImage* frame = cvCreateImage(size, in->depth, in->nChannels);
+	cvNamedWindow("original", 1);
+	cvNamedWindow("pyrDown", 1);
+	while (cvWaitKey(20) != 27){		
+		if (!(in = cvQueryFrame(capture))) break;
+		cvShowImage("original", in);
+		frame = doPyrDown(in);
+		cvShowImage("pyrDown", frame);
+		cvWriteFrame(writer, frame);
+		cvWriteToAVI(writer, in);
+	}
+
+	//释放空间
+	cvReleaseVideoWriter(&writer);
+	cvReleaseImage(&frame);
+	cvReleaseCapture(&capture);
+	cvDestroyAllWindows();
+	return 0;
+}
