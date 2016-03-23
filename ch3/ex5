@@ -1,0 +1,28 @@
+#include "cv.h"
+#include "highgui.h"
+
+
+int main(int argc, char** argv){
+	IplImage* img = cvCreateImage(cvSize(210, 210), 8,1);
+	cvZero(img);
+	
+	int x, y, width, height, value;
+	for (int i = 1; i <= 10; i++){
+		x = 10 * i;
+		y = x;
+		width = 210 - 20 * i;
+		height = width;
+		value = 20 * i;
+
+		cvSetImageROI(img,cvRect(x, y, width, height));
+		cvSet(img, cvScalar(value));
+		cvResetImageROI(img);
+	}
+	cvNamedWindow("hehe", 1);
+	cvShowImage("hehe", img);
+	cvWaitKey(0);
+
+	//system("pause");
+	cvReleaseImage(&img);
+	cvDestroyAllWindows();
+}
