@@ -1,0 +1,24 @@
+#include "cv.h"
+#include "cxcore.h"
+#include "highgui.h"
+
+int main(int argc, char** argv){
+	float x = -5.4;
+	printf("x = %f\n", x);
+	float absx = abs(x);
+	printf("absx = %f\n", absx);
+	int roundx = cvRound(absx);
+	printf("roundx = %d\n", roundx);
+	int randx = rand();
+	printf("randx = %d\n", randx);
+	srand(100);
+	int randy = rand();
+	printf("randy = %d\n", randy);
+	CvPoint2D32f p1(3.4, 6.5);
+	printf("CvPoint2D32f: (%f %f)\n", p1.x, p1.y);
+	CvPoint p2 = CvPoint(p1.x,p1.y);
+	printf("CvPoint: (%d %d)\n", p2.x, p2.y);
+	CvPoint2D32f p3 = CvPoint2D32f(p2.x, p2.y);
+	printf("CvPoint2D32f: (%f %f)\n", p3.x, p3.y);
+	system("pause");
+}
