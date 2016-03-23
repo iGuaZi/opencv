@@ -1,0 +1,26 @@
+#include "cv.h"
+#include "highgui.h"
+
+
+int main(int argc, char** argv){
+	IplImage* img = cvCreateImage(cvSize(210, 210), 8, 1);
+	cvZero(img);
+
+	IplImage* imgHead1 = cvCreateImageHeader(cvSize(20, 30), img->depth, img->nChannels);
+	imgHead1->origin = img->origin;
+	imgHead1->widthStep = img->widthStep;
+	IplImage* imgHead2 = cvCloneImage(imgHead1);
+	imgHead1->imageData = img->imageData + img->widthStep * 10 + 20;
+	imgHead2->imageData = img->imageData + img->widthStep * 100 + 50;
+	cvNot(imgHead1, imgHead1);
+	cvNot(imgHead2, imgHead2);
+
+
+	cvNamedWindow("hehe", 1);
+	cvShowImage("hehe", img);
+	cvWaitKey(0);
+
+	//system("pause");
+	cvReleaseImage(&img);
+	cvDestroyAllWindows();
+}
