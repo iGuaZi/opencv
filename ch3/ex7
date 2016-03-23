@@ -1,0 +1,33 @@
+#include "cv.h"
+#include "highgui.h"
+
+
+int main(int argc, char** argv){
+	IplImage* img = cvLoadImage("lena24.jpg");
+	IplImage* blue = cvCreateImage(CvSize(img->width,img->height), img->depth, 1);
+	IplImage* red = cvCreateImage(CvSize(img->width, img->height), img->depth, 1);
+	IplImage* green = cvCreateImage(CvSize(img->width, img->height), img->depth, 1);
+
+	cvSplit(img, blue, red, green,NULL);
+	IplImage* clone1 = cvCloneImage(green);
+	IplImage* clone2 = cvCloneImage(green);
+	double min, max;
+	cvMinMaxLoc(green, &min, &max);
+	printf("min: %f   max: %f", min, max);
+
+	unsigned char thresh = (unsigned char)((max - min) / 2.0);
+	cvSet(clone1, CvScalar(thresh));
+	cvSet(clone2, CvScalar(0));
+	cvCmp(green, clone1, clone2, CV_CMP_GE);
+
+	cvNamedWindow("hehe", 1);
+	cvShowImage("hehe", green);
+	cvWaitKey(0);
+	cvSubS(green, thresh / 2, green, clone2);
+	cvShowImage("hehe", green);
+	cvWaitKey(0);
+
+	//system("pause");
+	cvReleaseImage(&img);
+	cvDestroyAllWindows();
+}
