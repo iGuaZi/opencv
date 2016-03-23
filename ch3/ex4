@@ -1,0 +1,24 @@
+#include "cv.h"
+#include "highgui.h"
+
+
+int main(int argc, char** argv){
+	CvMat* mat = cvCreateMat(100, 100, CV_8UC3);
+	cvZero(mat);
+
+	int left = 20, top = 5, right = 40, bot = 20;
+	for (int row = left; row <= 40; row++){
+		char* ptr = (char*)(mat->data.ptr + row * mat->step);
+		for (int col = top; col <= bot; col++){
+			*(ptr + col * 3 * sizeof(char)+1) = 255;
+		}
+	}
+
+	cvNamedWindow("hehe", 1);
+	cvShowImage("hehe", mat);
+	cvWaitKey(0);
+
+	//system("pause");
+	cvReleaseMat(&mat);
+	cvDestroyAllWindows();
+}
