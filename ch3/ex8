@@ -1,0 +1,49 @@
+#include "cv.h"
+#include "highgui.h"
+
+typedef struct my_struct{
+	int Value;
+	CvPoint point;
+	CvRect  rect;
+};
+
+void write_my_struct(CvFileStorage* fs, const char* name, my_struct* ms);
+void read_my_struct(CvFileStorage* fs, CvFileNode* ms_node, my_struct *ms);
+
+
+
+int main(int argc, char** argv){
+	CvFileStorage* fs = cvOpenFileStorage(
+		"cfg.xml",
+		0,
+		CV_STORAGE_WRITE);
+	my_struct ms = { 10, cvPoint(10, 20), cvRect(0, 0, 20, 50) };
+
+	write_my_struct(fs, "struct", &ms);
+	cvReleaseFileStorage(&fs);
+	return 0;
+}
+
+void write_my_struct(CvFileStorage* fs, const char* name, my_struct* ms){
+	cvWriteInt(fs, name, ms->Value);
+
+	cvStartWriteStruct(fs, name, CV_NODE_SEQ);
+	cvWriteInt(fs, 0, ms->point.x);
+	cvWriteInt(fs, 0, ms->point.y);
+	cvEndWriteStruct(fs);
+
+	cvStartWriteStruct(fs, name, CV_NODE_SEQ);
+	cvWriteInt(fs, 0, ms->rect.x);
+	cvWriteInt(fs, 0, ms->rect.y);
+	cvWriteInt(fs, 0, ms->rect.width);
+	cvWriteInt(fs, 0, ms->rect.height);
+	cvEndWriteStruct(fs);
+}
+
+void read_my_struct(CvFileStorage* fs, CvFileNode* ms_node, my_struct *ms){
+	int value = cvReadIntByName(fs, 0, "value", 5);
+
+	CvSeq* s = cvGetFileNodeByName(fs, 0, "point")->data.seq;
+	int point_x = cvReadInt((CvFileNode *)cvGetSeqElem(s, 0));
+	int point_y = cvReadInt((CvFileNode *)cvGetSeqElem(s, 1));
+}
